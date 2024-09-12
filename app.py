@@ -75,7 +75,7 @@ class Player:
         self.PLAY = False
         self.PAUSE = False
         self.stream = None
-        self.vol = 0
+        self.vol = 5.
              
     def set_view(self, view):
         self.view = view
@@ -88,12 +88,11 @@ class Player:
             self.PLAY = True
             self.PAUSE = False
             self.index = index
-            self.vol = 10
         
             for i, frame in enumerate(self.media.get_media(self.index)):
-                # to do convert to numpy array similar to video and increase volumne
+                # to do convert to numpy array similar to video and change volumne
                 try:
-                    audio_ = np.frombuffer(frame[1], dtype=np.float32) * (self.vol * 0.05)
+                    audio_ = np.frombuffer(frame[1], dtype=np.float32) * (self.vol * 0.1)
                     print(audio_)
                     audio = audio_.tobytes()
                 except:
@@ -182,11 +181,13 @@ class Gui():
         self.btn_resume.pack(side=tk.LEFT)
         
     
-        self.scaler_vol = tk.Scale(self.win, from_=0, to=100, orient="horizontal", 
-                                   command=lambda x : print(self.player.set_volume(self.scaler_vol.get())))
-        self.scaler_vol.set(50)
-        self.scaler_vol.pack()
+        self.scaler_vol = tk.Scale(self.btns, from_=0, to=10, orient="horizontal", resolution=0.1, tickinterval=10,
+                                   length=200, showvalue=0, label="Volume",
+                                   command=lambda x : self.player.set_volume(((float(x)))))
         
+        self.scaler_vol.set(5.)
+        
+        self.scaler_vol.pack(side=tk.LEFT, padx=(10, 0), pady=(10, 10))
         self.win.config(menu=self.menu)
          
         self.win.mainloop()
@@ -211,9 +212,6 @@ class Gui():
 
             #media.load_media(key)
             
-        
-        
-        
             
     def play_media(self):
         key = self.list.get(self.list.curselection())
